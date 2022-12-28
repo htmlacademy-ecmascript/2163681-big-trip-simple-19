@@ -4,15 +4,28 @@ import {render} from '../render';
 
 export default class WindowPresenter {
 
-  constructor({tripContainer}) {
+  constructor({tripContainer, pointModel}) {
     this.tripContainer = tripContainer;
+    this.pointModel = pointModel;
   }
 
   init() {
-    render(new SearchFormView(), this.tripContainer);
+    this.points = [...this.pointModel.getPoints()];
+    const type = 'taxi';
+    const city = 'New - York';
+    const dataFrom = '19/03/19 00:00';
+    const dateTo = '19/03/19 20:30';
 
-    for (let i = 0; i < 3; i++) {
-      render(new TripItemView(), this.tripContainer);
-    }
+    this.filterRender(type, city, dataFrom, dateTo);
+
+    this.contentRender();
+  }
+
+  contentRender() {
+    render(new TripItemView(this.points), this.tripContainer);
+  }
+
+  filterRender(type, city, dataFrom, dateTo) {
+    render(new SearchFormView(type, city, dataFrom, dateTo, this.pointModel.getOffers(), this.pointModel.getDestinations()), this.tripContainer);
   }
 }
