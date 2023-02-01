@@ -3,17 +3,17 @@ import {getRandomPointsList, getOffersList, getDestinationsList} from '../mock/t
 const POINTS_COUNT = 15;
 
 export default class BigTripModel {
-  points = Array.from({length: POINTS_COUNT}, getRandomPointsList);
+  #points = Array.from({length: POINTS_COUNT}, getRandomPointsList);
 
-  getPoints(){
-    return this.points;
+  get points(){
+    return this.#points;
   }
 
-  getOffers() {
+  get offers() {
     return getOffersList();
   }
 
-  getDestinations() {
+  get destinations() {
     return getDestinationsList();
   }
 

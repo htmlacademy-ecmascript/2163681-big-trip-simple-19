@@ -1,31 +1,68 @@
-import SearchFormView from '../view/search-form-view.js';
 import TripItemView from '../view/trip-item-view.js';
 import {render} from '../render';
+import EditPointView from '../view/edit-point-view';
 
 export default class WindowPresenter {
 
+  #tripContainer = null;
+  #pointModel = null;
+  #points = null;
+
+  #type = null;
+  #city = null;
+  #dataFrom = null;
+  #dateTo = null;
+
   constructor({tripContainer, pointModel}) {
-    this.tripContainer = tripContainer;
-    this.pointModel = pointModel;
+    this.#tripContainer = tripContainer;
+    this.#pointModel = pointModel;
   }
 
   init() {
-    this.points = [...this.pointModel.getPoints()];
-    const type = 'taxi';
-    const city = 'New - York';
-    const dataFrom = '19/03/19 00:00';
-    const dateTo = '19/03/19 20:30';
-
-    this.filterRender(type, city, dataFrom, dateTo);
+    this.#points = [...this.#pointModel.points];
+    this.#type = 'taxi';
+    this.#city = 'New - York';
+    this.#dataFrom = '19/03/19 00:00';
+    this.#dateTo = '19/03/19 20:30';
 
     this.contentRender();
+
+    const tripEvents = document.querySelector('ul');
+
+    for (const tripEvent of tripEvents.children) {
+      const btn = tripEvent.querySelector('.event__rollup-btn');
+      btn.addEventListener('click', () => {
+        this.changeElement(tripEvent, tripEvents);
+      });
+    }
   }
 
   contentRender() {
-    render(new TripItemView(this.points), this.tripContainer);
+    render(new TripItemView(this.#points), this.#tripContainer);
   }
 
-  filterRender(type, city, dataFrom, dateTo) {
-    render(new SearchFormView(type, city, dataFrom, dateTo, this.pointModel.getOffers(), this.pointModel.getDestinations()), this.tripContainer);
+  changeElement(tripEvent, tripEvents) {
+    const editPointView = new EditPointView(this.#type, this.#city, this.#dataFrom, this.#dateTo, this.#pointModel.offers, this.#pointModel.destinations);
+    const replaceChild = tripEvents.replaceChild(editPointView.element, tripEvent);
+    const closeButtons = editPointView.element.querySelector('.event__rollup-btn');
+
+    closeButtons.addEventListener('click', () => {
+      changesToWaypoints();
+      document.removeEventListener('keydown', escKeyDownHandler);
+    });
+
+    document.addEventListener('keydown', escKeyDownHandler);
+
+    function changesToWaypoints() {
+      tripEvents.replaceChild(replaceChild, editPointView.element);
+    }
+
+    function escKeyDownHandler(evt) {
+      if (evt.key === 'Escape' || evt.key === 'Esc') {
+        evt.preventDefault();
+        changesToWaypoints();
+        document.removeEventListener('keydown', escKeyDownHandler);
+      }
+    }
   }
 }

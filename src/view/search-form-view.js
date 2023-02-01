@@ -105,28 +105,38 @@ const createSearchFormTemplate = (type, city, dateFrom, dateTo, offers, destinat
 };
 
 export default class SearchFormView {
+  #type = null;
+  #city = null;
+  #dataFrom = null;
+  #dataTo = null;
+  #offers = null;
+  #destinations = null;
+  #element = null;
+
   constructor(type, city, dataFrom, dateTo, offers, destinations) {
-    this.type = type;
-    this.city = city;
-    this.dataFrom = dataFrom;
-    this.dataTo = dateTo;
-    this.offers = offers;
-    this.destinations = destinations;
+    this.#type = type;
+    this.#city = city;
+    this.#dataFrom = dataFrom;
+    this.#dataTo = dateTo;
+    this.#offers = offers;
+    this.#destinations = destinations;
   }
 
-  getTemplate() {
-    return createSearchFormTemplate(this.type, this.city, this.dataFrom, this.dataTo, this.offers, this.destinations);
+  get template() {
+    return createSearchFormTemplate(this.#type, this.#city, this.#dataFrom, this.#dataTo, this.#offers, this.#destinations);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
+
+
 }
