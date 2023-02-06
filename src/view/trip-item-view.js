@@ -48,23 +48,26 @@ const mapToContent = (points) => points
 const createTripItemTemplate = (points) => `<ul>${mapToContent(points)}</ul>`;
 
 export default class TripItemView {
+  #points = null;
+  #element = null;
+
   constructor(points) {
-    this.points = points;
+    this.#points = points;
   }
 
-  getTemplate() {
-    return createTripItemTemplate(this.points);
+  get template() {
+    return createTripItemTemplate(this.#points);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
