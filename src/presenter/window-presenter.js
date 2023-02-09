@@ -1,12 +1,14 @@
 import TripItemView from '../view/trip-item-view.js';
 import {render} from '../render';
 import EditPointView from '../view/edit-point-view';
+import ListEmptyView from '../view/list-empty-view';
 
 export default class WindowPresenter {
 
   #tripContainer = null;
   #pointModel = null;
   #points = null;
+  #listEmptyView = new ListEmptyView();
 
   #type = null;
   #city = null;
@@ -27,18 +29,24 @@ export default class WindowPresenter {
 
     this.contentRender();
 
-    const tripEvents = document.querySelector('ul');
+    const buttonNewEvent = document.querySelector('.trip-main__event-add-btn');
+    buttonNewEvent.addEventListener('click', () => {
+      const tripItemView = new TripItemView(this.#points);
+      this.#tripContainer.replaceChild(tripItemView.element, this.#listEmptyView.element);
+      buttonNewEvent.disabled = true;
 
-    for (const tripEvent of tripEvents.children) {
-      const btn = tripEvent.querySelector('.event__rollup-btn');
-      btn.addEventListener('click', () => {
-        this.changeElement(tripEvent, tripEvents);
-      });
-    }
+      const tripEvents = document.querySelector('ul');
+      for (const tripEvent of tripEvents.children) {
+        const btn = tripEvent.querySelector('.event__rollup-btn');
+        btn.addEventListener('click', () => {
+          this.changeElement(tripEvent, tripEvents);
+        });
+      }
+    });
   }
 
   contentRender() {
-    render(new TripItemView(this.#points), this.#tripContainer);
+    render(this.#listEmptyView, this.#tripContainer);
   }
 
   changeElement(tripEvent, tripEvents) {
